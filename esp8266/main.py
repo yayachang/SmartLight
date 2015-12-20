@@ -1,15 +1,19 @@
 # This script is run on boot
 import pyb
 import esp
+
 pin  = pyb.Pin(2, pyb.Pin.OUT_PP)
 
-def recv(socket,data):
-	if pin.value():
+def recv(socket,data):        
+	print('receive cmd:')
+	print(data)
+	if data == b'0':
 		pin.value(0)
-		socket.send('on')
-	else:
+	elif data == b'1':
 		pin.value(1)
-		socket.send('off')
+	print('current status:')
+	print(pin.value())
+	socket.send(str(pin.value()))
 
 socket = esp.socket()
 socket.onconnect(lambda s: s.onrecv(recv))
